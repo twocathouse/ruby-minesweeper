@@ -4,6 +4,7 @@ class GridSquare
 
   UNCHECKED = "+".freeze
   BOMB = "B".freeze
+  FLAG = "F".freeze
 
   COLORS = {
     "0" => "white",
@@ -16,7 +17,8 @@ class GridSquare
     "7" => "light_blue",
     "8" => "light_magenta",
     "B" => "red",
-    "+" => "white"
+    "+" => "white",
+    "F" => "light_red"
   }
 
   def initialize
@@ -25,7 +27,13 @@ class GridSquare
   end
 
   def to_s
+    if flag?
+      print "#{FLAG} ".send(COLORS[FLAG])
+    elsif checked? || flag?
       print "#{symbol} ".send(COLORS[symbol])
+    else
+      print "#{UNCHECKED} ".send(COLORS[UNCHECKED])
+    end
   end
 
   def set_bomb!
@@ -40,14 +48,35 @@ class GridSquare
 
   def set_checked!(symbol)
     @checked = true
-    @symbol = symbol.to_s
+    if !bomb?
+      @symbol = symbol.to_s
+    end
   end
 
   def checked?
-    symbol != UNCHECKED
+    checked
   end
-  
+
+  def set_checked
+    @checked = true
+  end
+
+  def flag
+    if !checked?
+      @flagged = true
+    end
+  end
+
+  def unflag
+    if flag?
+      @flagged = false
+    end
+  end
+
+  def flag?
+    flagged
+  end
   private
 
-  attr_accessor :symbol, :checked
+  attr_accessor :symbol, :checked, :flagged
 end

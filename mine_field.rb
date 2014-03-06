@@ -11,6 +11,13 @@ class MineField
     board.each_with_index { |row, index| print_row(row, index) }
   end
 
+  def draw_with_bombs
+    board.each do |row|
+      row.each { |square| square.set_checked }
+    end
+    to_s
+  end
+
   def generate_bombs(position)
     bombs.times do
       place_bomb(position)
@@ -37,12 +44,15 @@ class MineField
       {row: row-1, col: col},
       {row: row-1, col: col+1},
       {row: row, col: col-1},
-      {row: row, col: col},
       {row: row, col: col+1},
       {row: row+1, col: col-1},
       {row: row+1, col: col},
       {row: row+1, col: col+1}
     ].select { |neighbor_position| valid_position neighbor_position }
+  end
+
+  def flatten_board
+    board.flatten
   end
   private
 
@@ -51,7 +61,6 @@ class MineField
   def new_board(grid_square_factory, size)
     Array.new(size) {Array.new(size) {grid_square_factory.new}}
   end
-
 
   def place_bomb(position)
     row = rand(size)
@@ -78,7 +87,6 @@ class MineField
     row.each { |grid_square| grid_square.to_s }
     puts
   end
-
 
   def valid_position(position)
     row = position[:row]
