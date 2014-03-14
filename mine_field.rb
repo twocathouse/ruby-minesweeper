@@ -1,14 +1,24 @@
+require './grid_square.rb'
+
 class MineField
   attr_reader :board
-  def initialize(grid_square_factory, size, bombs)
-    @board = new_board grid_square_factory, size
+
+  NEW_LINE = "\n"
+  SPACE = " "
+
+  def initialize(size, bombs, grid_square_factory = GridSquare)
+    @field = new_field size, grid_square_factory 
     @bombs = bombs
     @size = size
   end
 
   def to_s
-    print_column_header
-    board.each_with_index { |row, index| print_row(row, index) }
+    field_string = generate_column_header
+    field_string += field.each_with_index { |row, index| row_to_s(row, index + 1) }
+  end
+
+  def place_flag position
+
   end
 
   def draw_with_bombs
@@ -76,16 +86,25 @@ class MineField
     (row != position[:row] || col != position[:col]) && !board[row][col].bomb? && neighbors(position).all? { |neighbor_position| row != neighbor_position[:row] || col != neighbor_position[:col] }
   end
 
-  def print_column_header
-    print "  "
-    board.length.times { |col| print "#{col + 1} " }
-    puts
+  def generate_column_header
+    header = row_header_width
+    field.length.times { |col| header += "#{col + 1} " }
+    header += NEW_LINE
   end
 
-  def print_row(row, index)
-    print "#{index + 1} "
-    row.each { |grid_square| grid_square.to_s }
-    puts
+  def row_to_s(row, row_num)
+    row_string = "#{row_num}"
+    row_string += row_header_gap row_num
+    row.each { |grid_square| row_string += grid_square.to_s + SPACE }
+    row_string += NEW_LINE
+  end
+
+  def row_header_width
+    SPACE * @size.count + SPACE
+  end
+
+  def row_header_gap row_num
+    row_header_width - row_num.length
   end
 
   def valid_position(position)

@@ -1,31 +1,38 @@
+require './mine_field.rb'
+require './user_input.rb'
+
 class Minesweeper
 
-  def initialize(board)
-    @board = board
+  def initialize(size, bombs, field = MineField, input = UserInput.new)
+    @field = field.new size, bombs
+    @user_input = input
   end
 
   def play
     until game_over do
-      @board.to_s
+      draw_board
       make_move
     end
   end
 
   private
 
-  attr_reader :board
+  attr_reader :field, :user_input
+
+  def draw_board
+    puts field.to_s
+  end
 
   def make_move
     input = get_user_input
-    if input[0] == "f"
-      position = { row: input[1].to_i - 1, col: input[2].to_i - 1 }
-      flag_move position
+    mark_square input
+  end
+
+  def mark_square input
+    if input.flag?
+      field.place_flag input.position
     else
-      position = { row: input[0].to_i - 1, col: input[1].to_i - 1 }
-      if !board.has_bombs
-        board.generate_bombs position
-      end
-      check_move position
+      make_normal_move input.position
     end
   end
 
@@ -77,7 +84,7 @@ class Minesweeper
 
   def get_user_input
     print "Move? "
-    gets.strip.split(" ")
+    input = user_input.gets
   end
 
   def get_user_number_input

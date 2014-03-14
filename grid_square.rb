@@ -28,11 +28,11 @@ class GridSquare
 
   def to_s
     if flag?
-      print "#{FLAG} ".send(COLORS[FLAG])
+      "#{FLAG} ".send_public(COLORS[FLAG])
     elsif checked? || flag?
-      print "#{symbol} ".send(COLORS[symbol])
+      "#{symbol} ".send_public(COLORS[symbol])
     else
-      print "#{UNCHECKED} ".send(COLORS[UNCHECKED])
+      "#{UNCHECKED} ".send_public(COLORS[UNCHECKED])
     end
   end
 
